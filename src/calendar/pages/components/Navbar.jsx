@@ -9,6 +9,7 @@ export const Navbar = () => {
       </span>
       <button className='btn btn-danger'>
         <i className='fas fa-sign-out'></i>
+        &nbsp;
         <span>Salir</span>
       </button>
     </div>
