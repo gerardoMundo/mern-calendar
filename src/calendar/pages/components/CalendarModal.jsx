@@ -1,9 +1,38 @@
-import React from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { addHours, differenceInSeconds } from 'date-fns';
 import Modal from 'react-modal';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+import es from 'date-fns/locale/es';
+
+registerLocale('es', es);
 
 export const CalendarModal = () => {
+  const [formValues, setFormValues] = useState({
+    start: new Date(),
+    end: addHours(new Date(), 3),
+    title: 'Gerardo',
+    notes: 'Mundo',
+  });
   const [isOpen, setIsOpen] = useState(true);
+  const [formSubmited, setFormSubmited] = useState(false);
+
+  const onInputChange = ({ target }) => {
+    setFormValues({
+      ...formValues,
+      [target.name]: target.value,
+    });
+  };
+
+  const onDateChange = (target, changing) => {
+    setFormValues({
+      ...formValues,
+      [changing]: target,
+    });
+  };
 
   const customStyles = {
     content: {
@@ -18,10 +47,28 @@ export const CalendarModal = () => {
 
   Modal.setAppElement('#root');
 
-  function closeModal() {
+  const classTitle = useMemo(() => {
+    if (!formSubmited) return '';
+    return formValues.title.length > 3 ? 'is-valid' : 'is-invalid';
+  }, [formValues.title, formSubmited]);
+
+  const onSubmit = event => {
+    event.preventDefault();
+    setFormSubmited(true);
+
+    const difference = differenceInSeconds(formValues.end, formValues.start);
+    if (isNaN(difference) || difference <= 0) {
+      Swal.fire('Error en las fechas', 'Revisa las fechas ingresadas', 'error');
+      return;
+    }
+    if (formValues.title.length <= 0) return;
+    console.log(formValues);
+  };
+
+  const closeModal = () => {
     setIsOpen(false);
     console.log('cerrando modal');
-  }
+  };
 
   return (
     <Modal
@@ -32,9 +79,73 @@ export const CalendarModal = () => {
       overlayClassName='modal-fondo'
       closeTimeoutMS={200}
     >
-      <h1>Hola trunos!</h1>
+      <h1> Nuevo evento </h1>
       <hr />
-      <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
+      <form onSubmit={onSubmit} className='container'>
+        <div className='form-group mb-2'>
+          <label>Fecha y hora inicio</label>
+          <DatePicker
+            className='form-control'
+            selected={formValues.start}
+            dateFormat='Pp'
+            onChange={event => onDateChange(event, 'start')}
+            showTimeSelect
+            locale='es'
+            timeCaption='Hora'
+          />
+        </div>
+
+        <div className='form-group mb-2'>
+          <label>Fecha y hora fin</label>
+          <DatePicker
+            className='form-control'
+            minDate={formValues.start}
+            selected={formValues.end}
+            dateFormat='Pp'
+            onChange={event => onDateChange(event, 'end')}
+            showTimeSelect
+            locale='es'
+            timeCaption='Hora'
+          />
+        </div>
+
+        <hr />
+        <div className='form-group mb-2'>
+          <label>Titulo y notas</label>
+          <input
+            type='text'
+            className={`form-control ${classTitle}`}
+            placeholder='Título del evento'
+            name='title'
+            value={formValues.title}
+            onChange={onInputChange}
+            autoComplete='off'
+          />
+          <small id='emailHelp' className='form-text text-muted'>
+            Una descripción corta
+          </small>
+        </div>
+
+        <div className='form-group mb-2'>
+          <textarea
+            type='text'
+            className='form-control'
+            placeholder='Notas'
+            rows='5'
+            name='notes'
+            value={formValues.notes}
+            onChange={onInputChange}
+          ></textarea>
+          <small id='emailHelp' className='form-text text-muted'>
+            Información adicional
+          </small>
+        </div>
+
+        <button type='submit' className='btn btn-outline-primary btn-block'>
+          <i className='far fa-save'></i>
+          <span> Guardar</span>
+        </button>
+      </form>
     </Modal>
   );
 };
