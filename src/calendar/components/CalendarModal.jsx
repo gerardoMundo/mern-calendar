@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { addHours, differenceInSeconds } from 'date-fns';
 import Modal from 'react-modal';
 import DatePicker, { registerLocale } from 'react-datepicker';
@@ -7,7 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import es from 'date-fns/locale/es';
-import { useUiStore } from '../../../hooks';
+import { useCalendarStore, useUiStore } from '../../hooks';
 
 registerLocale('es', es);
 
@@ -15,11 +15,12 @@ export const CalendarModal = () => {
   const [formValues, setFormValues] = useState({
     start: new Date(),
     end: addHours(new Date(), 3),
-    title: 'Gerardo',
-    notes: 'Mundo',
+    title: '',
+    notes: '',
   });
 
   const { isOpenDateModal, onCloseDateModal } = useUiStore();
+  const { activeEvent, startSavingNewNote } = useCalendarStore();
   const [formSubmited, setFormSubmited] = useState(false);
 
   const onInputChange = ({ target }) => {
@@ -58,6 +59,14 @@ export const CalendarModal = () => {
     return formValues.title.length > 3 ? 'is-valid' : 'is-invalid';
   }, [formValues.title, formSubmited]);
 
+  useEffect(() => {
+    if (activeEvent !== null) {
+      setFormValues({
+        ...activeEvent,
+      });
+    }
+  }, [activeEvent]);
+
   const onSubmit = event => {
     event.preventDefault();
     setFormSubmited(true);
@@ -69,6 +78,10 @@ export const CalendarModal = () => {
     }
     if (formValues.title.length <= 0) return;
     console.log(formValues);
+
+    startSavingNewNote(formValues);
+    onCloseDateModal();
+    setFormSubmited(false);
   };
 
   return (
