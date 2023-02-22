@@ -1,1 +1,2 @@
-export * from './pages/LoginPage';
+export * from './layout/MainPage';
+export * from './routes/AuthRoutes';

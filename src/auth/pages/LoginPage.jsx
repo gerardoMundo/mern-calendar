@@ -1,71 +1,41 @@
-import './LoginPage.css';
+import { Link } from 'react-router-dom';
+import { MainPage } from '../layout/MainPage';
 
 export const LoginPage = () => {
   return (
-    <div className='container login-container'>
-      <div className='row'>
-        <div className='col-md-6 login-form-1'>
-          <h3>Ingreso</h3>
-          <form>
-            <div className='form-group mb-2'>
-              <input
-                type='text'
-                className='form-control'
-                placeholder='Correo'
-              />
-            </div>
-            <div className='form-group mb-2'>
-              <input
-                type='password'
-                className='form-control'
-                placeholder='Contraseña'
-              />
-            </div>
-            <div className='form-group mb-2'>
-              <input type='submit' className='btnSubmit' value='Login' />
-            </div>
-          </form>
-        </div>
+    <MainPage title='Iniciar sesión'>
+      <div className=' col align-items-center'>
+        <form action='submit'>
+          <label className='form-label' htmlFor='mail'>
+            <h6>Correo:</h6>
+          </label>
+          <input
+            className='form-control'
+            id='mail'
+            placeholder='correo@correo.com'
+            type='mail'
+          />
 
-        <div className='col-md-6 login-form-2'>
-          <h3>Registro</h3>
-          <form>
-            <div className='form-group mb-2'>
-              <input
-                type='text'
-                className='form-control'
-                placeholder='Nombre'
-              />
-            </div>
-            <div className='form-group mb-2'>
-              <input
-                type='email'
-                className='form-control'
-                placeholder='Correo'
-              />
-            </div>
-            <div className='form-group mb-2'>
-              <input
-                type='password'
-                className='form-control'
-                placeholder='Contraseña'
-              />
-            </div>
+          <label className='form-label mt-3' htmlFor='mail'>
+            <h6>Contraseña:</h6>
+          </label>
+          <input
+            className='form-control'
+            id='mail'
+            placeholder='Tu contraseña'
+            type='password'
+          />
 
-            <div className='form-group mb-2'>
-              <input
-                type='password'
-                className='form-control'
-                placeholder='Repita la contraseña'
-              />
-            </div>
-
-            <div className='form-group mb-2'>
-              <input type='submit' className='btnSubmit' value='Crear cuenta' />
-            </div>
-          </form>
-        </div>
+          <div className='d-grid mt-4 mb-4'>
+            <button className='btn btn-primary' type='submit'>
+              Iniciar sesión
+            </button>
+          </div>
+          <Link to='/auth/register' className='link-primary mt-2'>
+            ¿Aún no te has registrado? Crea tu cuenta aquí
+          </Link>
+        </form>
       </div>
-    </div>
+    </MainPage>
   );
 };
