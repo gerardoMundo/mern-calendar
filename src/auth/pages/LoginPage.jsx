@@ -1,4 +1,7 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useAuthStore } from '../../hooks/useAuthStore';
 import { useForm } from '../../hooks/useForm';
 import { MainPage } from '../layout/MainPage';
 
@@ -7,10 +10,18 @@ export const LoginPage = () => {
     email: '',
     password: '',
   });
+  const { startLogin, errorMessage } = useAuthStore();
 
   const onLoginSubmit = e => {
     e.preventDefault();
+    startLogin({ email, password });
   };
+
+  useEffect(() => {
+    if (errorMessage !== undefined) {
+      Swal.fire('Error en la autenticación', errorMessage, 'error');
+    }
+  }, [errorMessage]);
 
   return (
     <MainPage title='Iniciar sesión'>
