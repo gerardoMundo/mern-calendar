@@ -1,8 +1,13 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useAuthStore } from '../../hooks/useAuthStore';
 import { useForm } from '../../hooks/useForm';
 import { MainPage } from '../layout/MainPage';
 
 export const RegisterPage = () => {
+  const { startRegistry, errorMessage } = useAuthStore();
+
   const { name, email, password, repeatPassword, onInputChange } = useForm({
     name: '',
     email: '',
@@ -12,8 +17,21 @@ export const RegisterPage = () => {
 
   const onRegisterSubmit = e => {
     e.preventDefault();
-    console.log({ name, email, password, repeatPassword });
+
+    if (password !== repeatPassword) {
+      return Swal.fire(
+        'Datos incorrectos',
+        'Las constraseñas no coinciden',
+        'error'
+      );
+    }
+
+    startRegistry({ name: name, email: email, password: password });
   };
+
+  useEffect(() => {
+    if (errorMessage !== undefined) Swal.fire('Error', errorMessage, 'error');
+  }, [errorMessage]);
 
   return (
     <MainPage title='Registro'>

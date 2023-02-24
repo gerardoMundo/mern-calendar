@@ -31,12 +31,67 @@ export const useAuthStore = () => {
     }
   };
 
+  const startRegistry = async ({ name, email, password }) => {
+    dispatch(onChecking());
+
+    try {
+      const { data } = await calendarApi.post('/auth/register', {
+        name,
+        email,
+        password,
+      });
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('token-init-time', new Date().getTime());
+
+      dispatch(onLogin({ uid: data.uid, name: data.name }));
+    } catch ({ response }) {
+      console.log({ response });
+      dispatch(
+        onLogOut(
+          response.data?.msg ||
+            'Hubo un problema al registrarse, intente de nuevo'
+        )
+      );
+
+      setTimeout(() => {
+        dispatch(clearErrorMessage());
+      }, 10);
+    }
+  };
+
+  const checkAuthToken = () => {
+    const token = localStorage.getItem('token');
+    if (!token) return dispatch(onLogOut());
+
+    try {
+      const { data } = calendarApi.get('/auth/renew');
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('token-init-time', new Date().getTime());
+
+      dispatch(onLogin({ uid: data.uid, name: data.name }));
+    } catch (error) {
+      localStorage.clear();
+      dispatch(onLogOut());
+    }
+  };
+
+  const startLogOut = () => {
+    localStorage.clear();
+
+    dispatch(onLogOut());
+  };
+
   return {
     status,
     user,
     errorMessage,
 
     //Métodos
+    checkAuthToken,
     startLogin,
+    startLogOut,
+    startRegistry,
   };
 };
