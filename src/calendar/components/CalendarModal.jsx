@@ -77,7 +77,6 @@ export const CalendarModal = () => {
       return;
     }
     if (formValues.title.length <= 0) return;
-    console.log(formValues);
 
     startSavingNewNote(formValues);
     onCloseDateModal();

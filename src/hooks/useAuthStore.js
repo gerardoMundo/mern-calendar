@@ -60,7 +60,7 @@ export const useAuthStore = () => {
     }
   };
 
-  const checkAuthToken = () => {
+  const checkAuthToken = async () => {
     const token = localStorage.getItem('token');
     if (!token) return dispatch(onLogOut());
 
