@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { addHours } from 'date-fns';
 
 /*
 const tempEvent = {
@@ -57,6 +56,11 @@ export const calendarSlice = createSlice({
           }
         });
     },
+    onLogOutCalendar: state => {
+      state.isLoadingEvents = true;
+      state.events = [];
+      state.activeEvent = null;
+    },
   },
 });
 
@@ -66,4 +70,5 @@ export const {
   updateEvents,
   deleteEvent,
   onLoadingEvents,
+  onLogOutCalendar,
 } = calendarSlice.actions;

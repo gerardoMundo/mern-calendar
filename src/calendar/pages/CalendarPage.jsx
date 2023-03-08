@@ -11,22 +11,24 @@ import {
   FabDelete,
 } from '../components';
 import { localizer, getMessages } from '../../helpers';
-import { useCalendarStore, useUiStore } from '../../hooks';
+import { useAuthStore, useCalendarStore, useUiStore } from '../../hooks';
 
 export const CalendarPage = () => {
   const [lastView, setlastView] = useState(
     localStorage.getItem('lastView') || 'week'
   );
 
-  const { startLoadingEvents } = useCalendarStore();
-
-  const { events, onSetActiveEvent } = useCalendarStore();
+  const { user } = useAuthStore();
+  const { events, onSetActiveEvent, startLoadingEvents } = useCalendarStore();
 
   const { onOpenDateModal } = useUiStore();
 
-  const eventStyleGetter = (event, start, edn, isSelected) => {
+  const eventStyleGetter = (event, start, end, isSelected) => {
+    const isMyEvent =
+      event.user?._id === user.uid || event.user?.uid === user.uid;
+
     const style = {
-      backgroundColor: '#437CF7',
+      backgroundColor: isMyEvent ? '#437CF7' : '#465660',
       borderRadius: '0px',
       opacity: 0.8,
       color: 'white',

@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 import calendarApi from '../api/calendarApi';
 import { convertDate } from '../helpers';
 import {
@@ -19,16 +20,22 @@ export const useCalendarStore = () => {
   };
 
   const startSavingNewNote = async calendarEvent => {
-    //TODO: esperar respuesta de backend
+    try {
+      if (calendarEvent.id) {
+        await calendarApi.put(`/events/${calendarEvent.id}`, calendarEvent);
 
-    if (calendarEvent.id) {
-      await calendarApi.put(`/events/${calendarEvent.id}`, calendarEvent);
+        dispatch(updateEvents({ ...calendarEvent, user }));
+      } else {
+        const { data } = await calendarApi.post(
+          '/events/create',
+          calendarEvent
+        );
 
-      dispatch(updateEvents({ ...calendarEvent, user }));
-    } else {
-      const { data } = await calendarApi.post('/events/create', calendarEvent);
-
-      dispatch(addNewEvent({ ...calendarEvent, id: data.event.id, user }));
+        dispatch(addNewEvent({ ...calendarEvent, id: data.event.id, user }));
+      }
+    } catch ({ response }) {
+      console.log(response);
+      Swal.fire('Error al guardar', response.data.msg, 'error');
     }
   };
 
@@ -44,8 +51,15 @@ export const useCalendarStore = () => {
     }
   };
 
-  const startDeletingEvent = () => {
-    dispatch(deleteEvent());
+  const startDeletingEvent = async () => {
+    try {
+      await calendarApi.delete(`/events/${activeEvent.id}`);
+
+      dispatch(deleteEvent());
+    } catch ({ response }) {
+      console.log(response);
+      Swal.fire('Error al eliminar', response.data.msg, 'error');
+    }
   };
 
   return {
