@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AuthRoutes } from '../auth';
+import { SkeletonLoader } from '../auth/components/SkeletonLoader';
 import { CalendarPage } from '../calendar';
 import { useAuthStore } from '../hooks';
 
@@ -12,7 +13,7 @@ export const AppRouter = () => {
   }, []);
 
   if (status === 'checking') {
-    return <h2>Cargando</h2>;
+    return <SkeletonLoader />;
   }
 
   return (
